@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parent Portal</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        #loginOverlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 99999;
+            justify-content: center;
+            align-items: center;
+        }
+        #loginOverlay.active { display: flex !important; }
+        .login-box {
+            background: var(--card); padding: 40px; border-radius: 12px;
+            max-width: 380px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .login-box h2 { color: #fff; text-align: center; margin-bottom: 24px; }
+        .login-box label { color: var(--muted); font-size: 13px; display: block; margin-bottom: 6px; }
+        .login-box input {
+            width: 100%; padding: 10px 12px; border-radius: 6px; border: 1px solid var(--border);
+            background: var(--bg); color: var(--text); font-size: 14px; margin-bottom: 16px;
+        }
+        .section-title { font-size: 14px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin: 24px 0 12px; }
+        .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .data-table th, .data-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+        .data-table th { color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; }
+        .empty-hint { color: var(--muted); font-size: 13px; padding: 12px 0; }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== LOGIN OVERLAY ==================== -->
+    <div id="loginOverlay">
+        <div class="login-box">
+            <h2>🎓 Parent Portal</h2>
+            <form id="parentLoginForm" onsubmit="event.preventDefault(); parentLogin();">
+                <label for="parentUsername">Username</label>
+                <input type="text" id="parentUsername" required autocomplete="username">
+                <label for="parentPassword">Password</label>
+                <input type="password" id="parentPassword" required autocomplete="current-password">
+                <button type="submit" class="btn btn-primary" style="width:100%;">Login</button>
+                <div id="parentLoginError" style="color:#ef4444; text-align:center; margin-top:12px; display:none; font-size:13px;"></div>
+            </form>
+            <p style="color:var(--muted); font-size:12px; text-align:center; margin-top:18px;">
+                Don't have login details? Contact the school office.
+            </p>
+        </div>
+    </div>
+
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside id="sidebar">
+        <div class="logo">
+            <div class="logo-icon">🎓</div>
+            <span class="logo-text">Parent Portal</span>
+        </div>
+        <nav>
+            <a href="javascript:void(0)" class="parent-nav-item nav-item active" data-page="dashboard">📊 Dashboard</a>
+            <a href="javascript:void(0)" class="parent-nav-item nav-item" data-page="fees">💳 Fees</a>
+            <a href="javascript:void(0)" class="parent-nav-item nav-item" data-page="results">📄 Results</a>
+            <a href="javascript:void(0)" class="parent-nav-item nav-item" data-page="attendance">🗓️ Attendance</a>
+            <a href="javascript:void(0)" class="parent-nav-item nav-item" data-page="notifications">📨 Notifications</a>
+        </nav>
+        <div style="padding:20px; border-top:1px solid #334155; margin-top:auto;">
+            <button onclick="parentLogout()" style="width:100%; background:transparent; border:1px solid #ef4444; color:#ef4444; padding:8px; border-radius:6px; cursor:pointer;">Logout</button>
+        </div>
+    </aside>
+
+    <!-- ==================== MAIN ==================== -->
+    <div id="main">
+        <div id="topbar">
+            <h1 id="parentTopbarTitle">Dashboard</h1>
+            <div style="display:flex; align-items:center; gap:16px;">
+                <span id="parentWelcome" style="color:var(--muted); font-size:13px;"></span>
+            </div>
+        </div>
+        <div id="content">
+            <div id="alert-container"></div>
+            <div id="page-content"><div class="loading">Loading…</div></div>
+        </div>
+    </div>
+
+    <script src="/static/js/parent.js"></script>
+</body>
+</html>

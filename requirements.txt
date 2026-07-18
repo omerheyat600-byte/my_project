@@ -1,0 +1,9 @@
+Flask>=3.0
+flask-cors>=4.0
+python-dotenv>=1.0
+waitress>=3.0
+requests>=2.31
+PyMySQL>=1.1
+DBUtils>=3.0
+openpyxl>=3.1
+bcrypt>=4.1

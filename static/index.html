@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduAdmin - School Management System</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        #loginOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 99999;
+            justify-content: center;
+            align-items: center;
+        }
+        #loginOverlay.active {
+            display: flex !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Overlay -->
+    <div id="loginOverlay">
+        <div style="background:#1e293b; padding:40px; border-radius:12px; max-width:400px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+            <h2 style="color:#f8fafc; text-align:center; margin-bottom:20px;">🔐 Admin Login</h2>
+            <form id="loginForm" onsubmit="event.preventDefault(); login();">
+                <div class="form-group">
+                    <label for="loginUsername" style="color:#94a3b8;">Username</label>
+                    <input type="text" id="loginUsername" class="filter" style="width:100%;" placeholder="admin" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword" style="color:#94a3b8;">Password</label>
+                    <input type="password" id="loginPassword" class="filter" style="width:100%;" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%; margin-top:10px;">Login</button>
+                <div id="loginError" style="color:#ef4444; text-align:center; margin-top:10px; display:none;"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar">
+        <div class="logo">
+            <div class="logo-icon">EA</div>
+            <span class="logo-text">EduAdmin</span>
+        </div>
+        <div id="sidebarSearchWrap" style="padding:0 14px 10px;">
+            <input type="text" id="sidebarSearch" placeholder="🔍 Search menu..." autocomplete="off"
+                oninput="filterSidebarNav(this.value)"
+                style="width:100%; box-sizing:border-box; padding:8px 10px; border-radius:8px; border:1px solid var(--border,#334155); background:var(--card2,#1e293b); color:inherit; font-size:13px;">
+        </div>
+        <nav id="sidebarNav">
+            <a href="javascript:void(0)" class="nav-item" data-page="dashboard">📊 Dashboard</a>
+            <a href="javascript:void(0)" class="nav-item" data-page="students">👥 Students</a>
+            <a href="javascript:void(0)" class="nav-item" data-page="promotions">🎓 Student Promotion</a>
+            <a href="javascript:void(0)" class="nav-item" data-page="admissions">🧾 Online Admission</a>
+            <a href="javascript:void(0)" class="nav-item" data-page="teachers">👤 Teachers</a>
+            <a href="javascript:void(0)" class="nav-item" data-page="classes">📚 Classes</a>
+            <a href="javascript:void(0)" class="nav-item" data-page="attendance">🗓️ Attendance</a>
+            <a href="javascript:void(0)" class="nav-item" data-page="staff-attendance">🧑‍🏫 Staff Attendance</a>
+            <a href="javascript:void(0)" class="nav-item" data-page="timetable">🕒 Timetable</a>
+            <a href="javascript:void(0)" class="nav-item" data-page="results">📄 Results</a>
+            <a href="javascript:void(0)" class="nav-item" data-page="examination">📝 Examination</a>
+            <a href="javascript:void(0)" class="nav-item" data-page="fees">💳 Fees</a>
+            <a href="javascript:void(0)" class="nav-item" data-page="expenses">💰 Expenses</a>
+            <a href="javascript:void(0)" class="nav-item" data-page="accounts">🧮 Accounts</a>
+            <a href="javascript:void(0)" class="nav-item" data-page="hr">🧑‍💼 HR</a>
+            <a href="javascript:void(0)" class="nav-item" data-page="library">📖 Library</a>
+            <a href="javascript:void(0)" class="nav-item" data-page="inventory">📦 Inventory</a>
+            <a href="javascript:void(0)" class="nav-item" data-page="id-cards">🪪 ID Cards</a>
+             <a href="javascript:void(0)" class="nav-item" data-page="reports">📊 Reports</a>
+            <a href="javascript:void(0)" class="nav-item" data-page="ai-tools">🤖 AI Tools</a>
+            <a href="javascript:void(0)" class="nav-item" data-page="notifications">📨 Notifications</a>
+            <a href="#" class="nav-item admin-only" data-page="users">👥 Users</a>
+            <a href="#" class="nav-item admin-only" data-page="parent-accounts">👨‍👩‍👧 Parent Accounts</a>
+            <a href="javascript:void(0)" class="nav-item admin-only" data-page="settings">⚙️ Settings</a>
+            <a href="javascript:void(0)" class="nav-item admin-only" data-page="backup">🗄️ Backup &amp; Restore</a>
+            <a href="javascript:void(0)" class="nav-item admin-only" data-page="import-data">📥 Import Data</a>
+            <a href="javascript:void(0)" class="nav-item" data-page="help">❓ Help</a>
+        </nav>
+        
+        <div style="padding:20px; border-top:1px solid #334155; margin-top:auto;">
+            <button id="logoutBtn" onclick="logout()" style="width:100%; background:transparent; border:1px solid #ef4444; color:#ef4444; padding:8px; border-radius:6px; cursor:pointer;">Logout</button>
+        </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <div id="main">
+        <div id="topbar">
+            <h1>School Management System</h1>
+            <div id="globalSearchWrap" style="position:relative; flex:1; max-width:420px; margin:0 20px;">
+                <input type="text" id="globalSearch" placeholder="🔍 Search students, results, fees, library..." autocomplete="off"
+                    style="width:100%; padding:8px 12px; border-radius:6px; border:1px solid #334155; background:#0f172a; color:#f8fafc; font-size:13px;">
+                <div id="searchResults" style="display:none; position:absolute; top:110%; left:0; right:0; background:#1e293b; border:1px solid #334155; border-radius:6px; max-height:360px; overflow-y:auto; z-index:200; box-shadow:0 8px 24px rgba(0,0,0,0.4);"></div>
+            </div>
+            <div style="display:flex; align-items:center; gap:16px;">
+                <span id="licenseExpiryLabel" style="font-size:12px;color:var(--muted)"></span>
+                <span style="font-size:13px;color:var(--muted)">EduAdmin v2.0</span>
+                <div id="userInfo" style="display:none;"></div>
+            </div>
+        </div>
+        <div id="licenseBanner" style="display:none; background:#78350f; color:#fde68a; padding:8px 24px; font-size:13px; text-align:center;"></div>
+        <div id="content">
+            <!-- Theme Selector will be dynamically added here by JavaScript -->
+            <div id="themeSelectorContainer"></div>
+            
+            <div id="alert-container"></div>
+            <div id="page-content"></div>
+        </div>
+    </div>
+
+    <!-- app.js split into feature modules — order matters: common.js and auth.js must load first -->
+    <script src="/static/js/modules/common.js"></script>
+    <script src="/static/js/modules/auth.js"></script>
+    <script src="/static/js/modules/search.js"></script>
+    <script src="/static/js/modules/users.js"></script>
+    <script src="/static/js/modules/parent_accounts.js"></script>
+    <script src="/static/js/modules/navigation.js"></script>
+    <script src="/static/js/modules/subjects.js"></script>
+    <script src="/static/js/modules/dashboard.js"></script>
+    <script src="/static/js/modules/students.js"></script>
+    <script src="/static/js/modules/promotions.js"></script>
+    <script src="/static/js/modules/admissions_admin.js"></script>
+    <script src="/static/js/modules/teachers.js"></script>
+    <script src="/static/js/modules/classes.js"></script>
+    <script src="/static/js/modules/attendance.js"></script>
+    <script src="/static/js/modules/staff_attendance.js"></script>
+    <script src="/static/js/modules/timetable.js"></script>
+    <script src="/static/js/modules/results.js"></script>
+    <script src="/static/js/modules/examination.js"></script>
+    <script src="/static/js/modules/fees.js"></script>
+    <script src="/static/js/modules/expenses.js"></script>
+    <script src="/static/js/modules/accounts.js"></script>
+    <script src="/static/js/modules/hr.js"></script>
+    <script src="/static/js/modules/library.js"></script>
+    <script src="/static/js/modules/inventory.js"></script>
+    <script src="/static/js/modules/id_cards.js"></script>
+    <script src="/static/js/modules/admission.js"></script>
+    <script src="/static/js/modules/reports.js"></script>
+    <script src="/static/js/modules/ai_tools.js"></script>
+    <script src="/static/js/modules/notifications.js"></script>
+    <script src="/static/js/modules/settings.js"></script>
+    <script src="/static/js/modules/backup.js"></script>
+    <script src="/static/js/modules/import_data.js"></script>
+    <script src="/static/js/modules/help.js"></script>
+</body>
+</html>

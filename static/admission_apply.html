@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Online Admission Form</title>
+<link rel="stylesheet" href="/static/css/style.css">
+<style>
+    body { background: var(--bg, #0f172a); min-height: 100vh; padding: 28px 16px; }
+    .aa-wrap { max-width: 720px; margin: 0 auto; }
+    .aa-header { text-align: center; margin-bottom: 22px; }
+    .aa-header h1 { color: var(--text, #f8fafc); font-size: 24px; margin: 0 0 6px; }
+    .aa-header p { color: var(--muted, #94a3b8); font-size: 13px; margin: 0; }
+    .aa-tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 18px; }
+    .aa-tab {
+        padding: 8px 18px; border-radius: 8px; border: 1px solid var(--border, #334155);
+        background: var(--card, #1e293b); color: var(--muted, #94a3b8); cursor: pointer; font-size: 13px; font-weight: 600;
+    }
+    .aa-tab.active { background: #0f172a; color: #fff; border-color: #0f172a; }
+    .aa-card { background: var(--card, #1e293b); border: 1px solid var(--border, #334155); border-radius: 12px; padding: 24px; }
+    .aa-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 18px; }
+    .aa-field { display: flex; flex-direction: column; gap: 6px; }
+    .aa-field.full { grid-column: 1 / -1; }
+    .aa-field label { font-size: 12px; font-weight: 600; color: var(--muted, #94a3b8); text-transform: uppercase; letter-spacing: .3px; }
+    .aa-field input, .aa-field select {
+        padding: 9px 11px; border-radius: 6px; border: 1px solid var(--border, #334155);
+        background: var(--bg, #0f172a); color: var(--text, #f8fafc); font-size: 14px;
+    }
+    .aa-submit { margin-top: 20px; text-align: right; }
+    #aaResult, #aaTrackResult { margin-top: 18px; }
+    .aa-success-box {
+        background: #052e1a; border: 1px solid #16a34a; color: #bbf7d0; padding: 16px; border-radius: 8px; font-size: 14px;
+    }
+    .aa-success-box strong { font-family: 'Consolas', monospace; font-size: 16px; }
+    .aa-error-box { background: #2e0505; border: 1px solid #dc2626; color: #fecaca; padding: 12px; border-radius: 8px; font-size: 13px; }
+    .aa-track-row { display: flex; gap: 10px; margin-bottom: 14px; }
+    .aa-track-row input { flex: 1; }
+    .aa-status-card { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 18px; font-size: 13px; color: var(--text, #f8fafc); }
+    .aa-status-card div span { color: var(--muted, #94a3b8); display: block; font-size: 11px; text-transform: uppercase; }
+</style>
+</head>
+<body>
+<div class="aa-wrap">
+    <div class="aa-header">
+        <h1>🎓 Online Admission Form</h1>
+        <p>Apply for admission or track an existing application.</p>
+    </div>
+
+    <div class="aa-tabs">
+        <button class="aa-tab active" id="tabApplyBtn" onclick="aaShowTab('apply')">Apply Now</button>
+        <button class="aa-tab" id="tabTrackBtn" onclick="aaShowTab('track')">Track My Application</button>
+    </div>
+
+    <!-- APPLY -->
+    <div class="aa-card" id="aaApplySection">
+        <form id="aaForm" onsubmit="event.preventDefault(); aaSubmitApplication();">
+            <div class="aa-form-grid">
+                <div class="aa-field full">
+                    <label for="aaName">Student Full Name *</label>
+                    <input type="text" id="aaName" required>
+                </div>
+                <div class="aa-field">
+                    <label for="aaFatherName">Father / Guardian Name *</label>
+                    <input type="text" id="aaFatherName" required>
+                </div>
+                <div class="aa-field">
+                    <label for="aaCnic">Student CNIC / B-Form No.</label>
+                    <input type="text" id="aaCnic" placeholder="XXXXX-XXXXXXX-X">
+                </div>
+                <div class="aa-field">
+                    <label for="aaDob">Date of Birth</label>
+                    <input type="date" id="aaDob">
+                </div>
+                <div class="aa-field">
+                    <label for="aaGender">Gender</label>
+                    <select id="aaGender">
+                        <option value="">Select</option>
+                        <option>Male</option>
+                        <option>Female</option>
+                    </select>
+                </div>
+                <div class="aa-field">
+                    <label for="aaGrade">Applying For (Class) *</label>
+                    <select id="aaGrade" required>
+                        <option value="">Select Class</option>
+                    </select>
+                </div>
+                <div class="aa-field">
+                    <label for="aaPhone">Phone Number *</label>
+                    <input type="text" id="aaPhone" required placeholder="03XXXXXXXXX">
+                </div>
+                <div class="aa-field">
+                    <label for="aaEmail">Email</label>
+                    <input type="email" id="aaEmail">
+                </div>
+                <div class="aa-field full">
+                    <label for="aaAddress">Address</label>
+                    <input type="text" id="aaAddress">
+                </div>
+                <div class="aa-field full">
+                    <label for="aaPrevSchool">Previous School (if any)</label>
+                    <input type="text" id="aaPrevSchool">
+                </div>
+                <div class="aa-field full">
+                    <label for="aaPhoto">Student Photo (optional)</label>
+                    <input type="file" id="aaPhoto" accept="image/png,image/jpeg,image/webp">
+                </div>
+            </div>
+            <div class="aa-submit">
+                <button type="submit" class="btn btn-primary" id="aaSubmitBtn">Submit Application</button>
+            </div>
+        </form>
+        <div id="aaResult"></div>
+    </div>
+
+    <!-- TRACK -->
+    <div class="aa-card" id="aaTrackSection" style="display:none;">
+        <div class="aa-track-row">
+            <input type="text" id="aaTrackInput" placeholder="Enter your Applicant No. (e.g. APP-2026-0001)">
+            <button class="btn btn-primary" onclick="aaTrackApplication()">Check Status</button>
+        </div>
+        <div id="aaTrackResult"></div>
+    </div>
+</div>
+
+<script>
+const AA_API = '/api';
+
+async function aaLoadClasses() {
+    try {
+        const res = await fetch(`${AA_API}/admissions/classes`);
+        const data = await res.json();
+        const select = document.getElementById('aaGrade');
+        (data.classes || []).forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c; opt.textContent = c;
+            select.appendChild(opt);
+        });
+    } catch (e) { /* non-critical */ }
+}
+aaLoadClasses();
+
+function aaShowTab(tab) {
+    document.getElementById('aaApplySection').style.display = tab === 'apply' ? 'block' : 'none';
+    document.getElementById('aaTrackSection').style.display = tab === 'track' ? 'block' : 'none';
+    document.getElementById('tabApplyBtn').classList.toggle('active', tab === 'apply');
+    document.getElementById('tabTrackBtn').classList.toggle('active', tab === 'track');
+}
+
+async function aaSubmitApplication() {
+    const btn = document.getElementById('aaSubmitBtn');
+    const resultBox = document.getElementById('aaResult');
+    resultBox.innerHTML = '';
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    const payload = {
+        name: document.getElementById('aaName').value.trim(),
+        father_name: document.getElementById('aaFatherName').value.trim(),
+        cnic_bform: document.getElementById('aaCnic').value.trim(),
+        dob: document.getElementById('aaDob').value,
+        gender: document.getElementById('aaGender').value,
+        grade_applied: document.getElementById('aaGrade').value,
+        phone: document.getElementById('aaPhone').value.trim(),
+        email: document.getElementById('aaEmail').value.trim(),
+        address: document.getElementById('aaAddress').value.trim(),
+        previous_school: document.getElementById('aaPrevSchool').value.trim(),
+    };
+
+    try {
+        const res = await fetch(`${AA_API}/admissions/apply`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+            resultBox.innerHTML = `<div class="aa-error-box">${data.message || 'Submission failed. Please check the form and try again.'}</div>`;
+            return;
+        }
+
+        // Optional photo upload, best-effort — application is already saved either way.
+        const photoFile = document.getElementById('aaPhoto').files[0];
+        if (photoFile) {
+            const fd = new FormData();
+            fd.append('photo', photoFile);
+            try {
+                await fetch(`${AA_API}/admissions/${data.id}/photo`, { method: 'POST', body: fd });
+            } catch (e) { /* non-critical */ }
+        }
+
+        resultBox.innerHTML = `
+            <div class="aa-success-box">
+                ✅ Application submitted successfully!<br>
+                Your Applicant Number is <strong>${data.applicant_no}</strong>.<br>
+                Please save this number — use it under "Track My Application" to check your admission status.
+            </div>`;
+        document.getElementById('aaForm').reset();
+    } catch (e) {
+        resultBox.innerHTML = `<div class="aa-error-box">Network error — please try again.</div>`;
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Submit Application';
+    }
+}
+
+async function aaTrackApplication() {
+    const box = document.getElementById('aaTrackResult');
+    const appNo = document.getElementById('aaTrackInput').value.trim();
+    if (!appNo) { box.innerHTML = `<div class="aa-error-box">Please enter your applicant number.</div>`; return; }
+
+    box.innerHTML = '<div style="color:var(--muted,#94a3b8);font-size:13px;">Checking...</div>';
+    try {
+        const res = await fetch(`${AA_API}/admissions/track/${encodeURIComponent(appNo)}`);
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+            box.innerHTML = `<div class="aa-error-box">${data.message || 'Application not found.'}</div>`;
+            return;
+        }
+        const statusColors = { Pending: '#eab308', Tested: '#3b82f6', Waiting: '#f97316', Approved: '#16a34a', Rejected: '#dc2626' };
+        const color = statusColors[data.status] || '#94a3b8';
+        box.innerHTML = `
+            <div class="aa-status-card">
+                <div><span>Applicant No.</span>${data.applicant_no}</div>
+                <div><span>Status</span><b style="color:${color}">${data.status}</b></div>
+                <div><span>Name</span>${data.name}</div>
+                <div><span>Applied For</span>${data.grade_applied}</div>
+                ${data.test_marks !== null && data.test_marks !== undefined ? `<div><span>Test Marks</span>${data.test_marks} / ${data.test_total}</div>` : ''}
+                ${data.remarks ? `<div><span>Remarks</span>${data.remarks}</div>` : ''}
+            </div>`;
+    } catch (e) {
+        box.innerHTML = `<div class="aa-error-box">Network error — please try again.</div>`;
+    }
+}
+</script>
+</body>
+</html>

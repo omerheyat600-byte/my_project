@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>License Required — EduAdmin</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .license-box {
+            background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+            padding: 48px; max-width: 480px; width: 100%; text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .license-icon { font-size: 48px; margin-bottom: 16px; }
+        .license-box h1 { color: #fff; font-size: 20px; margin-bottom: 12px; }
+        .license-box p { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 8px; }
+        .license-detail {
+            margin-top: 20px; padding: 14px; background: var(--card2); border-radius: 8px;
+            font-size: 13px; color: var(--text);
+        }
+        .license-contact { margin-top: 24px; font-size: 13px; color: var(--muted); }
+    </style>
+</head>
+<body>
+    <div class="license-box">
+        <div class="license-icon">🔒</div>
+        <h1>This copy of EduAdmin is not licensed</h1>
+        <p id="licenseMessage">Checking license status…</p>
+        <div class="license-detail" id="licenseDetail" style="display:none;"></div>
+        <div class="license-contact">
+            Please get a valid license to continue using EduAdmin, or contact your system administrator / support provider for renewal.
+        </div>
+    </div>
+
+    <script>
+        fetch('/api/license-status', { credentials: 'include' })
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('licenseMessage').textContent = data.message || 'Please get a valid license to continue.';
+                if (data.expiry_date) {
+                    const detail = document.getElementById('licenseDetail');
+                    detail.style.display = 'block';
+                    detail.textContent = `License expiry date: ${data.expiry_date}`;
+                }
+            })
+            .catch(() => {
+                document.getElementById('licenseMessage').textContent =
+                    'Please get a valid license to continue using EduAdmin.';
+            });
+    </script>
+</body>
+</html>
