@@ -67,6 +67,16 @@ MYSQL_DB = os.environ.get("MYSQL_DB", "school_erp")
 # reject some valid input.
 MYSQL_CHARSET = "utf8mb4"
 
+# Managed MySQL providers (Aiven included) enforce TLS on the connection.
+# - MYSQL_SSL_CA: path to a CA cert file (Aiven dashboard -> your service
+#   -> "CA Certificate" download link) for full certificate verification.
+#   Recommended for production.
+# - MYSQL_USE_SSL=true (without a CA path): enables TLS without verifying
+#   the certificate — works as a quick fallback but is weaker.
+# Leave both unset for local MySQL/XAMPP (no SSL, as before).
+MYSQL_SSL_CA = os.environ.get("MYSQL_SSL_CA", "").strip()
+MYSQL_USE_SSL = os.environ.get("MYSQL_USE_SSL", "").strip().lower() == "true"
+
 # ─────────────────────────────────────────────
 # LICENSE SYSTEM
 # ─────────────────────────────────────────────

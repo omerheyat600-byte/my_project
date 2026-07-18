@@ -38,6 +38,14 @@ import config
 # .close() on the wrapper just returns the connection to the pool
 # instead of tearing it down, so no call sites needed to change.
 # ─────────────────────────────────────────────
+# Build the ssl kwarg only when needed, so local MySQL/XAMPP (no SSL
+# config set) connects exactly as before.
+_ssl_kwargs = {}
+if config.MYSQL_SSL_CA:
+    _ssl_kwargs["ssl"] = {"ca": config.MYSQL_SSL_CA}
+elif config.MYSQL_USE_SSL:
+    _ssl_kwargs["ssl"] = {}
+
 _pool = PooledDB(
     creator=pymysql,
     maxconnections=20,
@@ -52,6 +60,7 @@ _pool = PooledDB(
     database=config.MYSQL_DB,
     charset=config.MYSQL_CHARSET,
     autocommit=False,
+    **_ssl_kwargs,
 )
 
 
