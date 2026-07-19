@@ -60,7 +60,7 @@ load_dotenv(os.path.join(BASE_DIR, '.env'), override=True)
 MYSQL_HOST = os.environ.get("MYSQL_HOST", "127.0.0.1")
 MYSQL_PORT = int(os.environ.get("MYSQL_PORT", "3306"))
 MYSQL_USER = os.environ.get("MYSQL_USER", "root")
-MYSQL_PASSWORD = os.environ.get("MYSQL_PASSWORD", "MyNewPass123!")
+MYSQL_PASSWORD = os.environ.get("MYSQL_PASSWORD", "")
 MYSQL_DB = os.environ.get("MYSQL_DB", "school_erp")
 # utf8mb4 so names, addresses, etc. can hold any Unicode character
 # (emoji included) — plain utf8 in MySQL is a 3-byte subset that will

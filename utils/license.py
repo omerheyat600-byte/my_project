@@ -68,28 +68,25 @@ def generate_license_key(company_name, expiry_date):
 
 
 def _read_license_file():
-    """
-    Read (key, expiry_date) from either environment variables or the
-    license.key file. license.key format is two lines:
-        <KEY>
-        <YYYY-MM-DD>
-    The second line is optional only for the legacy perpetual key.
-    """
-    key = os.environ.get('LICENSE_KEY', '').strip()
-    expiry = os.environ.get('LICENSE_EXPIRY', '').strip()
+    key = os.environ.get("LICENSE_KEY", "").strip()
+    expiry = os.environ.get("LICENSE_EXPIRY", "").strip()
     source = "env"
 
-    if not key:
-        try:
-            with open(os.path.join(BASE_DIR, 'license.key'), 'r') as f:
-                lines = [line.strip() for line in f.readlines() if line.strip()]
-            if lines:
-                key = lines[0]
-            if len(lines) > 1 and not expiry:
-                expiry = lines[1]
+    try:
+        with open(os.path.join(BASE_DIR, "license.key"), "r", encoding="utf-8") as f:
+            lines = [line.strip() for line in f if line.strip()]
+
+        if not key and len(lines) >= 1:
+            key = lines[0]
+
+        if not expiry and len(lines) >= 2:
+            expiry = lines[1]
+
+        if lines:
             source = "license.key"
-        except FileNotFoundError:
-            pass
+
+    except FileNotFoundError:
+        pass
 
     return key, expiry, source
 
